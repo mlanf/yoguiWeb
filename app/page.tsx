@@ -18,7 +18,7 @@ export default function YoguiAiLanding() {
         <div className="flex justify-center">
           <Image
             src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/yogui%20ai%20LOGO%20AI%20celeste-X1oIsBhGq3iUwVi0DkKHJ8HtwVo7Li.png"
-            alt="Yogui.ai Logo"
+            alt="Yogui Logo"
             width={900}
             height={360}
             className="h-40 sm:h-48 md:h-72 w-auto max-w-full"
@@ -258,7 +258,7 @@ export default function YoguiAiLanding() {
           <div className="flex justify-center mb-3 md:mb-4">
             <Image
               src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/yogui%20ai%20LOGO%20AI%20celeste-X1oIsBhGq3iUwVi0DkKHJ8HtwVo7Li.png"
-              alt="Yogui.ai Logo"
+              alt="Yogui Logo"
               width={120}
               height={48}
               className="h-6 md:h-8 w-auto opacity-80 max-w-full"

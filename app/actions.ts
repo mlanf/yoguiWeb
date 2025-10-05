@@ -14,13 +14,21 @@ export async function submitInvitation(prevState: any, formData: FormData) {
   }
 
   try {
+    // Verificar que existe la URL del script
+    if (!process.env.GOOGLE_SCRIPT_URL) {
+      console.error("GOOGLE_SCRIPT_URL no está configurada")
+      throw new Error("Configuración incompleta")
+    }
+
     // Obtener la fecha y hora actual
     const fecha = new Date().toLocaleString("es-AR", {
       timeZone: "America/Argentina/Buenos_Aires",
     })
 
+    console.log("Enviando datos a Google Sheets:", { fecha, nombre, telefono, email })
+
     // Enviar datos a Google Sheets usando Google Apps Script
-    const response = await fetch(process.env.GOOGLE_SCRIPT_URL!, {
+    const response = await fetch(process.env.GOOGLE_SCRIPT_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -33,7 +41,12 @@ export async function submitInvitation(prevState: any, formData: FormData) {
       }),
     })
 
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`)
+    }
+
     const data = await response.json()
+    console.log("Respuesta de Google Sheets:", data)
 
     if (data.result === "success") {
       return {
