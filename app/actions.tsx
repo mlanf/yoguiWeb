@@ -1,9 +1,6 @@
 "use server"
 
-import { sendEmail } from "./emailService" // Declare or import the sendEmail variable
-
 export async function submitInvitation(prevState: any, formData: FormData) {
-  // Obtener los datos del formulario
   const nombre = formData.get("nombre") as string
   const telefono = formData.get("telefono") as string
   const email = formData.get("email") as string
@@ -17,32 +14,32 @@ export async function submitInvitation(prevState: any, formData: FormData) {
   }
 
   try {
-    // Simular envío de email (aquí integrarías con un servicio real como Resend, SendGrid, etc.)
-    console.log("Enviando email a lanfranconi@gmail.com con los datos:")
-    console.log({
-      nombre,
-      telefono,
-      email: email || "No proporcionado",
+    // Enviar a Web3Forms
+    const response = await fetch("https://api.web3forms.com/submit", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        access_key: process.env.WEB3FORMS_ACCESS_KEY, // Necesitas obtener esta key
+        subject: "Nueva solicitud de invitación - Yogui",
+        from_name: "Yogui Landing Page",
+        nombre: nombre,
+        telefono: telefono,
+        email: email || "No proporcionado",
+        to_email: "lanfranconi@gmail.com", // Tu email
+      }),
     })
 
-    // Simular delay de envío
-    await new Promise((resolve) => setTimeout(resolve, 1000))
+    const data = await response.json()
 
-    // En producción, aquí enviarías el email real:
-    await sendEmail({
-      to: "lanfranconi@gmail.com",
-      subject: "Nueva solicitud de invitación - Yogui",
-      html: `
-        <h2>Nueva solicitud de invitación</h2>
-        <p><strong>Nombre:</strong> ${nombre}</p>
-        <p><strong>Teléfono:</strong> ${telefono}</p>
-        <p><strong>Email:</strong> ${email || "No proporcionado"}</p>
-      `,
-    })
-
-    return {
-      success: true,
-      message: "Invitación solicitada",
+    if (data.success) {
+      return {
+        success: true,
+        message: "Invitación solicitada",
+      }
+    } else {
+      throw new Error("Error en el envío")
     }
   } catch (error) {
     console.error("Error al enviar:", error)
