@@ -14,47 +14,32 @@ export async function submitInvitation(prevState: any, formData: FormData) {
   }
 
   try {
-    // Verificar que existe la URL del script
-    if (!process.env.GOOGLE_SCRIPT_URL) {
-      console.error("GOOGLE_SCRIPT_URL no está configurada")
-      throw new Error("Configuración incompleta")
-    }
-
-    // Obtener la fecha y hora actual
-    const fecha = new Date().toLocaleString("es-AR", {
-      timeZone: "America/Argentina/Buenos_Aires",
-    })
-
-    console.log("Enviando datos a Google Sheets:", { fecha, nombre, telefono, email })
-
-    // Enviar datos a Google Sheets usando Google Apps Script
-    const response = await fetch(process.env.GOOGLE_SCRIPT_URL, {
+    // Enviar a Web3Forms
+    const response = await fetch("https://api.web3forms.com/submit", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        fecha,
-        nombre,
-        telefono,
+        access_key: process.env.WEB3FORMS_ACCESS_KEY, // Necesitas obtener esta key
+        subject: "Nueva solicitud de invitación - Yogui",
+        from_name: "Yogui Landing Page",
+        nombre: nombre,
+        telefono: telefono,
         email: email || "No proporcionado",
+        to_email: "lanfranconi@gmail.com", // Tu email
       }),
     })
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`)
-    }
-
     const data = await response.json()
-    console.log("Respuesta de Google Sheets:", data)
 
-    if (data.result === "success") {
+    if (data.success) {
       return {
         success: true,
         message: "Invitación solicitada",
       }
     } else {
-      throw new Error(data.error || "Error al registrar")
+      throw new Error("Error en el envío")
     }
   } catch (error) {
     console.error("Error al enviar:", error)
