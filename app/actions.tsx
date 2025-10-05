@@ -14,35 +14,36 @@ export async function submitInvitation(prevState: any, formData: FormData) {
   }
 
   try {
-    // Enviar a Web3Forms
-    const response = await fetch("https://api.web3forms.com/submit", {
+    // Guardar en Google Sheets
+    const response = await fetch(process.env.GOOGLE_SCRIPT_URL!, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        access_key: process.env.WEB3FORMS_ACCESS_KEY, // Necesitas obtener esta key
-        subject: "Nueva solicitud de invitación - Yogui",
-        from_name: "Yogui Landing Page",
         nombre: nombre,
         telefono: telefono,
         email: email || "No proporcionado",
-        to_email: "lanfranconi@gmail.com", // Tu email
+        fecha: new Date().toLocaleString("es-AR", { timeZone: "America/Argentina/Buenos_Aires" }),
       }),
     })
 
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`)
+    }
+
     const data = await response.json()
 
-    if (data.success) {
+    if (data.result === "success") {
       return {
         success: true,
         message: "Invitación solicitada",
       }
     } else {
-      throw new Error("Error en el envío")
+      throw new Error(data.error || "Error desconocido")
     }
   } catch (error) {
-    console.error("Error al enviar:", error)
+    console.error("Error al guardar en Google Sheets:", error)
     return {
       success: false,
       message: "Error al enviar la solicitud. Inténtalo nuevamente.",
